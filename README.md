@@ -22,3 +22,4 @@ How to use:
 
 3. API requests: post data to http://127.0.0.1:5690/report , check detail in test_cn_en.py and test_en_cn.py
 
+nohup python3 main.py > translator.log 2>&1 &
