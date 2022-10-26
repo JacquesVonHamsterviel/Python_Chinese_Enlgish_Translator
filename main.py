@@ -2,7 +2,10 @@
 from flask import Flask, request
 from gevent import pywsgi
 from transformers import pipeline, AutoModelWithLMHead, AutoTokenizer
-import warnings, requests
+import warnings
+import time
+import base64
+
 warnings.filterwarnings('ignore')
 print('加载模型，请稍后。。。')
 model = AutoModelWithLMHead.from_pretrained('./model/zh-en')
@@ -17,16 +20,33 @@ app = Flask(__name__)
 def translate():
     text = request.form['text']
     lan = request.form['lan']
-    if lan == 'ch':
+    if lan == 'zh':
         translated_text = translation(text, max_length=500)[0]['translation_text']
+        #time.sleep(0.1)
         return translated_text
     if lan == 'en':
         translated_text = translation_en2zh(text, max_length=500)[0]['translation_text']
+        #time.sleep(0.1)
         return translated_text
-print('接入方式：\n1.POST传输数据到本服务，本机调用http://127.0.0.1:5690/report')
-print('2.内网接入，调用http://运行服务的内网IP地址:5690/report')
-print('3.外网接入，调用http://服务器公网IP:5690/report')
-print('服务开启成功')
+@app.route('/base64', methods=['POST'])
+def base64_translate():
+    text = request.form['text']
+    lan = request.form['lan']
+    verify_key=request.form['verify_key']
+    try:
+    	   text=base64.b64decode(text.encode()).decode()
+    except Exception as ex:
+        return "DecodeError"
+    if lan == 'zh':
+        translated_text = translation(text, max_length=500)[0]['translation_text']
+        #time.sleep(0.1)
+        return base64.b64encode((verify_key+translated_text).encode())
+    if lan == 'en':
+        translated_text = translation_en2zh(text, max_length=500)[0]['translation_text']
+        #time.sleep(0.1)
+        return base64.b64encode((verify_key+translated_text).encode())
+
+print('服务开启成功: http://127.0.0.1:5690/report')
 server = pywsgi.WSGIServer(('0.0.0.0', 5690), app)
 server.serve_forever()
 text = 'text'
