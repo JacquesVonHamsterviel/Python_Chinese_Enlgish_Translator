@@ -1,5 +1,5 @@
 # Python Chinese&Enlgish Offline Translator
-# Python中文英文离线翻译
+# Python中文英文离线翻译，中英文离线翻译，中英文翻译
 
 使用方法
 （ 0.如果有需要请创建并使用虚拟环境： python -m venv Translator，进入文件夹 cd Translator，激活虚拟环境 source bin/activate 或者 call scripts/activate.bat 克隆本仓库： git clone xxx ）
